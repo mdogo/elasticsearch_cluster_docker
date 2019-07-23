@@ -1,0 +1,154 @@
+version: '2.2'
+services:
+  master:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    container_name: master
+    expose:
+      - "9200"
+      - "9300"
+    networks: 
+      - esnet
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "node.master=true"
+      - "node.data=false"
+      - "node.ingest=false"
+      - "node.attr.type=master"
+      - "node.name=master"
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  data1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    container_name: data1
+    expose:
+      - "9200"
+      - "9300"
+    networks: 
+      - esnet
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "node.master=false"
+      - "node.data=true"
+      - "node.ingest=false"
+      - "node.attr.type=search"
+      - "node.name=data1"
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  data2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    container_name: data2
+    expose:
+      - "9200"
+      - "9300"
+    networks: 
+      - esnet
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "node.master=false"
+      - "node.data=true"
+      - "node.ingest=false"
+      - "node.attr.type=search"
+      - "node.name=data2"
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  index1:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    container_name: index1
+    expose:
+      - "9200"
+      - "9300"
+    networks: 
+      - esnet
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "node.master=false"
+      - "node.data=true"
+      - "node.ingest=false"
+      - "node.attr.type=index"
+      - "node.name=index1"
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  index2:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    container_name: index2
+    expose:
+      - "9200"
+      - "9300"
+    networks: 
+      - esnet
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "node.master=false"
+      - "node.data=true"
+      - "node.ingest=false"
+      - "node.attr.type=index"
+      - "node.name=index2"
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  index3:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    container_name: index3
+    expose:
+      - "9200"
+      - "9300"
+    networks: 
+      - esnet
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "node.master=false"
+      - "node.data=true"
+      - "node.ingest=false"
+      - "node.attr.type=index"
+      - "node.name=index3"
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+  proxy:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.16
+    container_name: proxy
+    expose:
+      - "9200"
+      - "9300"
+    networks: 
+      - esnet
+    ports:
+      - "9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    environment:
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "node.master=false"
+      - "node.data=false"
+      - "node.ingest=false"
+      - "search.remote.connect=false"
+      - "node.attr.type=proxy"
+      - "node.name=proxy"
+    volumes:
+      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+networks:
+  esnet:
