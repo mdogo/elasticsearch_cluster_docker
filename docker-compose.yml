@@ -1,7 +1,7 @@
 networks:
   doofinder_net:
     external: true
-  esnet:
+  default:
 services:
   master:
     build:
@@ -11,8 +11,6 @@ services:
     expose:
       - "9200"
       - "9300"
-    networks:
-      - esnet
     ulimits:
       memlock:
         soft: -1
@@ -24,6 +22,8 @@ services:
       node.ingest:    "false"
       node.attr.type: "master"
       node.name:      "master"
+    networks:
+      doofinder_net:
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
   search:
@@ -31,8 +31,6 @@ services:
     expose:
       - "9200"
       - "9300"
-    networks:
-      - esnet
     ulimits:
       memlock:
         soft: -1
@@ -44,6 +42,8 @@ services:
       node.ingest:    "false"
       node.attr.type: "search"
       node.name:      "search"
+    networks:
+      doofinder_net:
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
   index:
@@ -51,8 +51,6 @@ services:
     expose:
       - "9200"
       - "9300"
-    networks:
-      - esnet
     ulimits:
       memlock:
         soft: -1
@@ -64,6 +62,8 @@ services:
       node.ingest:    "false"
       node.attr.type: "index"
       node.name:      "index"
+    networks:
+      doofinder_net:
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
   proxy:
@@ -75,7 +75,6 @@ services:
       doofinder_net:
         aliases:
           - cluster
-      esnet:
     ports:
       - "9205:9200"
     ulimits:
