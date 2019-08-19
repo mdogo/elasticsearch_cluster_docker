@@ -16,17 +16,20 @@ services:
         soft: -1
         hard: -1
     environment:
-      ES_JAVA_OPTS:   "-Xms512m -Xmx512m"
-      node.master:    "true"
-      node.data:      "false"
-      node.ingest:    "false"
-      node.attr.type: "master"
-      node.name:      "master"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      node.master:  "true"
+      node.data:    "false"
+      node.ingest:  "false"
+      node.name:    "master"
     networks:
       doofinder_net:
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - master:/usr/share/elasticsearch/data
   search:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     image: doofinder/cluster
     expose:
       - "9200"
@@ -46,7 +49,11 @@ services:
       doofinder_net:
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - search:/usr/share/elasticsearch/data
   index:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     image: doofinder/cluster
     expose:
       - "9200"
@@ -59,14 +66,18 @@ services:
       ES_JAVA_OPTS:   "-Xms512m -Xmx512m"
       node.master:    "false"
       node.data:      "true"
-      node.ingest:    "false"
+      node.ingest:    "true"
       node.attr.type: "index"
       node.name:      "index"
     networks:
       doofinder_net:
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - index:/usr/share/elasticsearch/data
   proxy:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
     image: doofinder/cluster
     expose:
       - "9200"
@@ -82,12 +93,15 @@ services:
         soft: -1
         hard: -1
     environment:
-      ES_JAVA_OPTS:   "-Xms512m -Xmx512m"
-      node.master:    "false"
-      node.data:      "false"
-      node.ingest:    "false"
-      node.attr.type: "proxy"
-      node.name:      "proxy"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      node.master:  "false"
+      node.data:    "false"
+      node.ingest:  "false"
+      node.name:    "proxy"
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
 version: '2.2'
+volumes:
+  master:
+  search:
+  index:

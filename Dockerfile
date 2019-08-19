@@ -1,7 +1,9 @@
-FROM elasticsearch:5.6.16
+FROM docker.elastic.co/elasticsearch/elasticsearch:5.6.16
 
 # Install required plugins
-RUN elasticsearch-plugin install analysis-phonetic
-RUN elasticsearch-plugin install analysis-kuromoji
-RUN elasticsearch-plugin install repository-s3
-RUN elasticsearch-plugin install x-pack
+RUN elasticsearch-plugin install analysis-phonetic --batch --silent
+RUN elasticsearch-plugin install analysis-kuromoji --batch --silent
+RUN elasticsearch-plugin install analysis-smartcn --batch --silent
+
+# Remove x-pack
+RUN elasticsearch-plugin remove x-pack --silent
