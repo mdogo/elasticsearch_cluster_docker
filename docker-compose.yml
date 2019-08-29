@@ -1,31 +1,7 @@
 networks:
   doofinder_net:
     external: true
-  default:
 services:
-  master:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    image: doofinder/cluster
-    expose:
-      - "9200"
-      - "9300"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    environment:
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      node.master:  "true"
-      node.data:    "false"
-      node.ingest:  "false"
-      node.name:    "master"
-    networks:
-      doofinder_net:
-    volumes:
-      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - master:/usr/share/elasticsearch/data
   search:
     build:
       context: .
@@ -34,19 +10,24 @@ services:
     expose:
       - "9200"
       - "9300"
+    ports:
+      - "9205:9200"
     ulimits:
       memlock:
         soft: -1
         hard: -1
     environment:
       ES_JAVA_OPTS:   "-Xms512m -Xmx512m"
-      node.master:    "false"
+      node.master:    "true"
       node.data:      "true"
       node.ingest:    "false"
       node.attr.type: "search"
       node.name:      "search"
     networks:
       doofinder_net:
+        aliases:
+          - cluster
+          - search
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - search:/usr/share/elasticsearch/data
@@ -74,34 +55,7 @@ services:
     volumes:
       - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
       - index:/usr/share/elasticsearch/data
-  proxy:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    image: doofinder/cluster
-    expose:
-      - "9200"
-      - "9300"
-    networks:
-      doofinder_net:
-        aliases:
-          - cluster
-    ports:
-      - "9205:9200"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    environment:
-      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
-      node.master:  "false"
-      node.data:    "false"
-      node.ingest:  "false"
-      node.name:    "proxy"
-    volumes:
-      - ./elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
 version: '2.2'
 volumes:
-  master:
   search:
   index:
